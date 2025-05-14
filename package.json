@@ -2,12 +2,30 @@
   "name": "zen-indent",
   "displayName": "Zen Indent",
   "description": "Visual indenting, no matter how it’s written.",
+	"publisher": "sharapeco",
+  "license": "MIT",
   "version": "0.0.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/sharapeco/vscode-zap-to-char/"
+	},
+  "icon": "assets/zen-indent.png",
+	"galleryBanner": {
+		"color": "#3a3d41",
+		"theme": "dark"
+	},
   "engines": {
     "vscode": "^1.100.0"
   },
   "categories": [
     "Other"
+  ],
+  "keywords": [
+    "indent",
+    "zen",
+    "indentation",
+    "visual",
+    "editor"
   ],
   "activationEvents": ["*"],
   "main": "./out/extension.js",
@@ -15,7 +33,6 @@
     "commands": [
     ]
   },
-  "icon": "assets/zen-indent.png",
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
