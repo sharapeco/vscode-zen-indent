@@ -5,12 +5,12 @@ const extensionShortName = "zenIndent";
 function isArray(obj: unknown): obj is Array<unknown> {
 	return Array.isArray(obj);
 }
+
 function isObject(obj: unknown): obj is Record<string, unknown> {
 	return typeof obj === "object" && !isArray(obj);
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log("zenIndent activated");
 	const zenIndent = new ZenIndent();
 
 	vscode.workspace.onDidChangeConfiguration(
@@ -63,25 +63,33 @@ class ZenIndent {
 		this.indentWidthByLanguageID.clear();
 		this.indentWidthByLanguageID.set("default", 4);
 		if (typeof widthConfig === "number") {
-			this.indentWidthByLanguageID.set("default", widthConfig);
-		} else if (isObject(widthConfig)) {
-			if (typeof widthConfig.default === "number") {
-				this.indentWidthByLanguageID.set("default", widthConfig.default);
+			const [width, err] = this.validateWidth(widthConfig);
+			if (width !== null) {
+				this.indentWidthByLanguageID.set("default", width);
+			} else {
+				this.showInvalidConfigurationWarning(err);
 			}
+		} else if (isObject(widthConfig)) {
 			for (const key in widthConfig) {
 				if (typeof widthConfig[key] !== "number") {
 					continue;
 				}
-				const width = widthConfig[key];
+				const [width, err] = this.validateWidth(widthConfig[key]);
+				if (width === null) {
+					this.showInvalidConfigurationWarning(err);
+					continue;
+				}
 				for (const languageId of key.split(",")) {
 					this.indentWidthByLanguageID.set(languageId, width);
 				}
 			}
+		} else if (widthConfig !== undefined) {
+			this.showInvalidConfigurationWarning("Value must be a number or an object");
 		}
 
 		this.decorations.clear();
 		const diffWidths = Array.from(
-			new Set(Object.values(this.indentWidthByLanguageID)).values(),
+			new Set(this.indentWidthByLanguageID.values()).values(),
 		).sort((a, b) => a - b);
 
 		for (const width of diffWidths) {
@@ -92,7 +100,7 @@ class ZenIndent {
 				width,
 				vscode.window.createTextEditorDecorationType({
 					before: {
-						contentText: String(width).repeat(width),
+						contentText: "\u00A0".repeat(width), // Non-breaking space
 						backgroundColor: new vscode.ThemeColor("zenIndent.indent"),
 					},
 					letterSpacing: "-10em", // Make spaces or a tab to zero width
@@ -123,13 +131,15 @@ class ZenIndent {
 
 	updateEditor(editor: vscode.TextEditor) {
 		const tabSize = this.getTabSize(editor);
-		vscode.window.showInformationMessage(`tabSize = ${tabSize}`);
 
 		const whitespaceRanges = [];
 		const defaultWidth = this.indentWidthByLanguageID.get("default") ?? 0;
 		const width =
 			this.indentWidthByLanguageID.get(editor.document.languageId) ??
 			defaultWidth;
+
+		console.log(`indentation width = ${width}`);
+
 		const decoration = this.decorations.get(width);
 		if (decoration === undefined) {
 			return;
@@ -184,6 +194,33 @@ class ZenIndent {
 			}
 		}
 		return tabSize;
+	}
+
+	validateWidth(width: number): [number | null, string] {
+		if (width <= 0) {
+			return [null, "Width must be greater than 0"];
+		}
+		const intWidth = Math.floor(width);
+		if (intWidth !== width) {
+			return [null, "Width must be an integer"];
+		}
+		return [intWidth, ""];
+	}
+
+	showInvalidConfigurationWarning(reason: string) {
+		const message = `Invalid configuration for ${extensionShortName}.indentSize: ${reason}`;
+		vscode.window.showWarningMessage(message, {
+			modal: false,
+		}, "Open Settings").then((result) => {
+			if (result === "Open Settings") {
+				vscode.commands.executeCommand(
+					"workbench.action.openSettings",
+					`${extensionShortName}.indentSize`,
+				);
+			}
+		});
+		// Log the message to the console
+		console.warn(message);
 	}
 }
 
