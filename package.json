@@ -2,36 +2,27 @@
   "name": "zen-indent",
   "displayName": "Zen Indent",
   "description": "Visual indenting, no matter how it’s written.",
-	"publisher": "sharapeco",
+  "publisher": "sharapeco",
   "license": "MIT",
-  "version": "0.0.1",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/sharapeco/vscode-zap-to-char/"
-	},
-  "icon": "assets/zen-indent.png",
-	"galleryBanner": {
-		"color": "#3a3d41",
-		"theme": "dark"
-	},
-  "engines": {
-    "vscode": "^1.100.0"
+  "version": "0.0.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sharapeco/vscode-zen-indent/"
   },
-  "categories": [
-    "Other"
-  ],
-  "keywords": [
-    "indent",
-    "zen",
-    "indentation",
-    "visual",
-    "editor"
-  ],
+  "icon": "assets/zen-indent.png",
+  "galleryBanner": {
+    "color": "#3a3d41",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.46.0"
+  },
+  "categories": ["Other"],
+  "keywords": ["indent", "zen", "indentation", "visual", "editor"],
   "activationEvents": ["*"],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-    ]
+    "commands": []
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -42,14 +33,14 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.100.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/vscode": "^1.46.0",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
-    "eslint": "^9.25.1",
-    "typescript": "^5.8.3",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3"
   }
 }

@@ -29,7 +29,7 @@ You can also configure indentation size per language by setting specific values 
 
 ```json
 "zenIndent.indentSize": {
-	"javascript": 2,
-	"python": 4
+  "javascript": 2,
+  "python": 4
 }
 ```

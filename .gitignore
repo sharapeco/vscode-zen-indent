@@ -3,4 +3,9 @@ dist
 node_modules
 .vscode-test/
 *.vsix
+
+# System files
+.DS_Store
+Thumbs.db
+Desktop.ini
 *~lock~
